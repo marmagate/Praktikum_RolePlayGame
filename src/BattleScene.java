@@ -7,6 +7,8 @@ public class BattleScene {
             int turn = 1;
             //Когда бой будет закончен мы
             boolean isFightEnded = false;
+            System.out.printf("На вашем пути появляется %s с %d HP, %d золота и %d опыта...%n",
+                    monster.getName(),monster.getMaxHP(), monster.getGold(), monster.getXp());
             while (!isFightEnded) {
                 System.out.println("----Ход: " + turn + "----");
                 //Воины бьют по очереди, поэтому здесь мы описываем логику смены сторон
@@ -18,7 +20,7 @@ public class BattleScene {
                 try {
                     //Чтобы бой не проходил за секунду, сделаем имитацию работы, как если бы
                     //у нас была анимация
-                    Thread.sleep(1000);
+                    Thread.sleep(2000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -38,7 +40,10 @@ public class BattleScene {
         //Если атака прошла, выводим в консоль сообщение об этом
         if (hit != 0) {
             System.out.printf("%s Нанес удар в %d единиц!%n", attacker.getName(), hit);
-            System.out.printf("У %s осталось %d единиц здоровья...%n", defender.getName(), defenderHealth);
+            if (defenderHealth <= 0) {
+                System.out.printf("%s прощается с жизнью...%n", defender.getName());
+            } else
+            System.out.printf("У %s осталось %d единиц здоровья%n", defender.getName(), defenderHealth);
         } else {
             //Если атакующий промахнулся (то есть урон не 0), выводим это сообщение
             System.out.printf("%s промахнулся!%n", attacker.getName());
@@ -54,6 +59,17 @@ public class BattleScene {
             System.out.printf("Враг повержен! Вы получаете %d ед. опыта и %d золота%n", defender.getXp(), defender.getGold());
             attacker.setXp(attacker.getXp() + defender.getXp());
             attacker.setGold(attacker.getGold() + defender.getGold());
+            if (attacker.getXp() >= attacker.getMaxXP()) {
+                attacker.setLvl(attacker.getLvl() + 1);
+                attacker.setXp(attacker.getXp() - attacker.getMaxXP());
+                attacker.setMaxXP(attacker.getMaxXP() + attacker.getMaxXP()/2);
+                attacker.setMaxHP(attacker.getMaxHP() + 15);
+                attacker.setHealthPoints(attacker.getMaxHP());
+                attacker.setStrength(attacker.getStrength() + 3);
+                attacker.setDexterity(attacker.getDexterity() + 3);
+                System.out.printf("%s достиг %d уровня!%n", attacker.getName(), attacker.getLvl());
+                Realm.getStats();
+            }
             //вызываем коллбэк, что мы победили
             fightCallback.fightWin();
             return true;

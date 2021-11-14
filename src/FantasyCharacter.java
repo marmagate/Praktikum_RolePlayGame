@@ -2,6 +2,9 @@ public abstract class FantasyCharacter implements Fighter {
     //Имя персонажа
     private String name;
     //Статы персонажа
+    private int maxHP;
+    private int maxXP;
+    private int lvl;
     private int healthPoints;
     private int strength;
     private int dexterity;
@@ -10,13 +13,16 @@ public abstract class FantasyCharacter implements Fighter {
     private int gold;
 
     //Конструктор
-    public FantasyCharacter(String name, int healthPoints, int strength, int dexterity, int xp, int gold) {
+    public FantasyCharacter(String name, int healthPoints, int strength, int dexterity, int xp, int gold, int lvl) {
         this.name = name;
         this.healthPoints = healthPoints;
+        this.maxHP = healthPoints;
         this.strength = strength;
         this.dexterity = dexterity;
         this.xp = xp;
+        this.maxXP = 150;
         this.gold = gold;
+        this.lvl = lvl;
     }
 
     //Метод для ведения боя
@@ -30,12 +36,32 @@ public abstract class FantasyCharacter implements Fighter {
     }
 
     //Геттеры и сеттеры
-    public String getName() {
-        return name;
+    public int getMaxXP() {
+        return maxXP;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setMaxXP(int maxXP) {
+        this.maxXP = maxXP;
+    }
+
+    public int getLvl() {
+        return lvl;
+    }
+
+    public void setLvl(int lvl) {
+        this.lvl = lvl;
+    }
+
+    public int getMaxHP() {
+        return maxHP;
+    }
+
+    public void setMaxHP(int maxHP) {
+        this.maxHP = maxHP;
+    }
+
+    public String getName() {
+        return name;
     }
 
     public int getHealthPoints() {

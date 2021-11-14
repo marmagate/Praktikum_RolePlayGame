@@ -4,7 +4,7 @@ public class Merchant implements Seller {
     public String sell(Goods goods) {
         String result = "";
         if (goods == Goods.HP_POTION) {
-            result = "health_potion";
+            result = "Health Potion";
         }
         return result;
     }
