@@ -1,4 +1,4 @@
 public interface Seller {
 
-    String sell(Merchant.Goods goods);
+    Item sell(Merchant.Goods goods);
 }

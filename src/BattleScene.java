@@ -8,7 +8,7 @@ public class BattleScene {
             //Когда бой будет закончен мы
             boolean isFightEnded = false;
             System.out.printf("На вашем пути появляется %s с %d HP, %d золота и %d опыта...%n",
-                    monster.getName(),monster.getMaxHP(), monster.getGold(), monster.getXp());
+                    monster.getName(), monster.getMaxHP(), monster.getGold(), monster.getXp());
             while (!isFightEnded) {
                 System.out.println("----Ход: " + turn + "----");
                 //Воины бьют по очереди, поэтому здесь мы описываем логику смены сторон
@@ -43,7 +43,7 @@ public class BattleScene {
             if (defenderHealth <= 0) {
                 System.out.printf("%s прощается с жизнью...%n", defender.getName());
             } else
-            System.out.printf("У %s осталось %d единиц здоровья%n", defender.getName(), defenderHealth);
+                System.out.printf("У %s осталось %d единиц здоровья%n", defender.getName(), defenderHealth);
         } else {
             //Если атакующий промахнулся (то есть урон не 0), выводим это сообщение
             System.out.printf("%s промахнулся!%n", attacker.getName());
@@ -62,7 +62,7 @@ public class BattleScene {
             if (attacker.getXp() >= attacker.getMaxXP()) {
                 attacker.setLvl(attacker.getLvl() + 1);
                 attacker.setXp(attacker.getXp() - attacker.getMaxXP());
-                attacker.setMaxXP(attacker.getMaxXP() + attacker.getMaxXP()/2);
+                attacker.setMaxXP(attacker.getMaxXP() + attacker.getMaxXP() / 2);
                 attacker.setMaxHP(attacker.getMaxHP() + 15);
                 attacker.setHealthPoints(attacker.getMaxHP());
                 attacker.setStrength(attacker.getStrength() + 3);

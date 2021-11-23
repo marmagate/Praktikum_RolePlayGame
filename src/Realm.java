@@ -18,6 +18,9 @@ public class Realm {
         br = new BufferedReader(new InputStreamReader(System.in));
         //Инициализируем класс для боя
         battleScene = new BattleScene();
+        //заполняем мап айтемов
+        Merchant.itemsMap.put("Health potion", new Item("Health potion", 75, true));
+        Merchant.itemsMap.put("Power rune", new Item("Power rune", 1500, true));
         //Первое, что нужно сделать при запуске игры, это создать персонажа, поэтому мы предлагаем ввести его имя
         System.out.println("Введите имя персонажа:");
         //Далее ждем ввод от пользователя
@@ -29,16 +32,15 @@ public class Realm {
     }
 
     //Взаимодействия с мерчантом
-    public static void merchantAction() throws IOException {
-        System.out.printf("Приветствую %s! Какой товар желаешь приобрести? (скажи 'отбой', если больше ничего не желаешь)%n", player.getName());
-        merchantGoodsScrolling();
+    public static void merchantAction() {
+        System.out.printf("Приветствую %s! Какой товар желаешь приобрести? ('назад', если больше ничего не желаешь)%n", player.getName());
     }
 
     public static void merchantGoodsScrolling() throws IOException {
         while (true) {
             System.out.println("Выбирай!\n" + Arrays.toString(Merchant.Goods.values()));
             String answer = br.readLine();
-            if (answer.equals("отбой")) {
+            if (answer.equals("назад")) {
                 System.out.printf("Приятно иметь с тобой дело, %s%n", player.getName());
                 printNavigation();
                 command(br.readLine());
@@ -46,9 +48,14 @@ public class Realm {
             }
             for (Merchant.Goods good : Merchant.Goods.values()) {
                 if (good.name().equals(answer)) {
-                    player.take(merchant.sell(good));
-                    System.out.println("Держи " + Merchant.Goods.HP_POTION.name());
-                } else System.out.println("Опечатался, наверное...");
+                    Item itemToSell = merchant.sell(good);
+                    int price = itemToSell.getPrice();
+                    if (player.getGold() >= price) {
+                        player.setGold(Math.max(player.getGold() - price, 0));
+                        player.take(itemToSell);
+                        System.out.println("Держи " + itemToSell.getName());
+                    } else System.out.println("У тебя не хватает монет на это добро...");
+                }
             }
         }
     }
@@ -71,21 +78,27 @@ public class Realm {
         }
         //Варианты для команд
         switch (string) {
-            case "1":
+            case "1": {
                 merchantAction();
-                break;
-            case "2":
+                merchantGoodsScrolling();
+            }
+            break;
+            case "2": {
                 commitFight();
-                break;
-            case "3":
+            }
+            break;
+            case "3": {
                 commitDragonFight();
-                break;
-            case "4":
-                System.exit(1);
-                break;
-            case "да":
+            }
+            break;
+            case "4": {
+                backpackAction();
+            }
+            break;
+            case "да": {
                 command("2");
-                break;
+            }
+            break;
             case "нет": {
                 printNavigation();
                 command(br.readLine());
@@ -95,9 +108,40 @@ public class Realm {
                 getStats();
             }
             break;
+            case "404": {
+                System.exit(1);
+            }
+            break;
         }
         //Снова ждем команды от пользователя
         command(br.readLine());
+    }
+
+    public static void backpackAction() throws IOException {
+        System.out.println("Что бы такого использовать... ('назад' - чтобы вернуться)");
+        System.out.println(player.backpack);
+        String answer = br.readLine();
+        switch (answer) {
+            case "назад": {
+            }
+            printNavigation();
+            break;
+            case "Health potion": {
+                player.useItem(Merchant.itemsMap.get("Health potion"));
+                backpackAction();
+            }
+            break;
+            case "Power rune": {
+                player.useItem(Merchant.itemsMap.get("Power rune"));
+                backpackAction();
+            }
+            break;
+            default: {
+                System.out.println("Что-то не получилось...");
+                backpackAction();
+            }
+            break;
+        }
     }
 
     public static void getStats() {
@@ -110,8 +154,9 @@ public class Realm {
         System.out.println("1. К Торговцу");
         System.out.println("2. В темный лес");
         System.out.println("3. Воевать с драконом");
-        System.out.println("4. Выход");
+        System.out.println("4. Инвентарь");
         System.out.println("99. Статы");
+        System.out.println("404. Выход");
     }
 
     private static void commitFight() {
@@ -120,12 +165,7 @@ public class Realm {
             public void fightWin() {
                 System.out.printf("%s победил! Теперь у вас %d (MAX %d) опыта и %d золота, а также осталось %d единиц здоровья.%n",
                         player.getName(), player.getXp(), player.getMaxXP(), player.getGold(), player.getHealthPoints());
-                System.out.println("Желаете продолжить поход или вернуться в город? (да/нет)");
-                try {
-                    command(br.readLine());
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                System.out.println("Желаете продолжить поход? (да/нет)");
             }
 
             @Override
@@ -133,14 +173,9 @@ public class Realm {
                 player.setGold(player.getGold() / 2);
                 player.setXp(player.getXp() / 2);
                 player.setHealthPoints(player.getMaxHP() / 2);
-                System.out.printf("%s пал в бою. Вы теряете половину всего заработанного опыта и золота, и восстаете из пепла с 50 процентами здоровья",
+                System.out.printf("%s пал в бою. Вы теряете половину всего заработанного опыта и золота, и восстаете из пепла с 50 процентами здоровья%n",
                         player.getName());
-                try {
-                    printNavigation();
-                    command(br.readLine());
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                printNavigation();
             }
         });
     }
@@ -151,12 +186,7 @@ public class Realm {
             public void fightWin() {
                 System.out.printf("%s победил! Теперь у вас %d (MAX %d) опыта и %d золота, а также осталось %d единиц здоровья.%n",
                         player.getName(), player.getXp(), player.getMaxXP(), player.getGold(), player.getHealthPoints());
-                System.out.println("Желаете продолжить поход или вернуться в город? (да/нет)");
-                try {
-                    command(br.readLine());
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                printNavigation();
             }
 
             @Override
@@ -164,14 +194,9 @@ public class Realm {
                 player.setGold(player.getGold() / 2);
                 player.setXp(player.getXp() / 2);
                 player.setHealthPoints(player.getMaxHP() / 2);
-                System.out.printf("%s пал в бою. Вы теряете половину всего заработанного опыта и золота, и восстаете из пепла с 50 процентами здоровья",
+                System.out.printf("%s пал в бою. Вы теряете половину всего заработанного опыта и золота, и восстаете из пепла с 50 процентами здоровья%n",
                         player.getName());
-                try {
-                    printNavigation();
-                    command(br.readLine());
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                printNavigation();
             }
         });
     }
@@ -189,7 +214,7 @@ public class Realm {
                 50,
                 10,
                 10,
-                100,
+                110,
                 20,
                 4
         );

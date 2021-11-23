@@ -1,6 +1,6 @@
 public abstract class FantasyCharacter implements Fighter {
     //Имя персонажа
-    private String name;
+    private final String name;
     //Статы персонажа
     private int maxHP;
     private int maxXP;
@@ -30,8 +30,7 @@ public abstract class FantasyCharacter implements Fighter {
     public int attack() {
         if (dexterity * 3 > getRandomValue() * 4) {
             return strength * 2;
-        } else
-            if (dexterity * 3 > getRandomValue()) return strength;
+        } else if (dexterity * 3 > getRandomValue()) return strength;
         else return 0;
     }
 
