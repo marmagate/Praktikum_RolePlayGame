@@ -3,8 +3,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Arrays;
 
-// smth to pull
-
 public class Realm {
     //Класс для чтения введенных строк из консоли
     private static BufferedReader br;
