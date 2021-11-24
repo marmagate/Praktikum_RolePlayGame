@@ -54,7 +54,7 @@ public class Realm {
                         player.setGold(Math.max(player.getGold() - price, 0));
                         player.take(itemToSell);
                         System.out.println("Держи " + itemToSell.getName());
-                    } else System.out.println("У тебя не хватает монет на это добро...");
+                    } else System.out.println("У тебя не хватает монет на это добрo...");
                 }
             }
         }
